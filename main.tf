@@ -29,10 +29,19 @@ module "private_subnet" {
   subnet_cidr = "10.0.2.0/24"
   az_name = "us-east-1a"
 }
+
+module "public_subnetb" {
+  depends_on     = [module.internet_gtw.public_route_table_id]
+  source         = "./vpc/public_subnet"
+  vpc_id         = module.vpc.vpc_id
+  subnet_cidr    = "10.0.3.0/24"
+  route_table_id = module.internet_gtw.public_route_table_id
+  az_name = "us-east-1b"
+}
 module "private_subnetb" {
   source      = "./vpc/private_subnet"
   vpc_id      = module.vpc.vpc_id
-  subnet_cidr = "10.0.3.0/24"
+  subnet_cidr = "10.0.4.0/24"
   az_name = "us-east-1b"
 }
 
