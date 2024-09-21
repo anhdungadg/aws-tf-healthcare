@@ -21,6 +21,7 @@ module "public_subnet" {
   vpc_id         = module.vpc.vpc_id
   subnet_cidr    = "10.0.1.0/24"
   route_table_id = module.internet_gtw.public_route_table_id
+  az_name = "us-east-1a"
 }
 
 module "private_subnet" {
@@ -45,19 +46,19 @@ module "private_subnetb" {
   az_name = "us-east-1b"
 }
 
-# module "ec2_billing" {
-#   asg_name         = "billing"
-#   source           = "./ec2_application"
-#   vpc_id           = module.vpc.vpc_id
-#   public_subnet_id = module.public_subnet.public_subnet_id
-# }
+module "ec2_billing" {
+  asg_name         = "billing"
+  source           = "./ec2_application"
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.public_subnet.public_subnet_id
+}
 
-# module "ec2_scheduling" {
-#   asg_name         = "scheduling"
-#   source           = "./ec2_application"
-#   vpc_id           = module.vpc.vpc_id
-#   public_subnet_id = module.public_subnet.public_subnet_id
-# }
+module "ec2_scheduling" {
+  asg_name         = "scheduling"
+  source           = "./ec2_application"
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.public_subnet.public_subnet_id
+}
 
 module "rds" {
   source = "./rds"
@@ -66,22 +67,22 @@ module "rds" {
   subnet_id_azb = module.private_subnetb.private_subnet_id
 }
 
-# module "s3_bucket" {
-#   source      = "./s3_bucket"
-#   bucket_name = "my-private-s3-bucket"
-# }
+module "s3_bucket" {
+  source      = "./s3_bucket"
+  bucket_name = "my-private-s3-bucket"
+}
 
-# module "s3_lifecycle" {
-#   source = "./s3_bucket/s3_lifecycle"
-#   bucket_name = "my-private-s3-bucket"
-# }
+module "s3_lifecycle" {
+  source = "./s3_bucket/s3_lifecycle"
+  bucket_name = "my-private-s3-bucket"
+}
 
-# module "s3_vpc_endpoint" {
-#   source             = "./s3_bucket/s3_vpc_endpoint"
-#   vpc_id             = module.vpc.vpc_id
-# #   private_subnet_ids = [module.private_subnet.subnet_id, module.public_subnet.subnet_id]
-#   private_subnet_id = module.private_subnet.private_subnet_id
-#   public_subnet_id = module.public_subnet.public_subnet_id
-#   private_routetable_id = module.internet_gtw.public_route_table_id
-#   public_routetable_id = module.vpc.default_route_table_id
-# }
+module "s3_vpc_endpoint" {
+  source             = "./s3_bucket/s3_vpc_endpoint"
+  vpc_id             = module.vpc.vpc_id
+#   private_subnet_ids = [module.private_subnet.subnet_id, module.public_subnet.subnet_id]
+  private_subnet_id = module.private_subnet.private_subnet_id
+  public_subnet_id = module.public_subnet.public_subnet_id
+  private_routetable_id = module.internet_gtw.public_route_table_id
+  public_routetable_id = module.vpc.default_route_table_id
+}
