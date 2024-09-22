@@ -73,21 +73,21 @@ module "private_subnetb" {
 # - asg_name: Specifies the name of the Auto Scaling Group.
 # - vpc_id: References the VPC ID from the VPC module.
 # - public_subnet_id: References the public subnet ID from the public subnet module.
-# module "ec2_billing" {
-#   asg_name         = "billing"
-#   source           = "./ec2_application"
-#   vpc_id           = module.vpc.vpc_id
-#   public_subnet_id = module.public_subnet.public_subnet_id
-#   environment = "sa-assignment"
-# }
+module "ec2_billing" {
+  asg_name         = "billing"
+  source           = "./ec2_application"
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.public_subnet.public_subnet_id
+  environment = "sa-assignment"
+}
 
-# module "ec2_scheduling" {
-#   asg_name         = "scheduling"
-#   source           = "./ec2_application"
-#   vpc_id           = module.vpc.vpc_id
-#   public_subnet_id = module.public_subnet.public_subnet_id
-#   environment = "sa-assignment"
-# }
+module "ec2_scheduling" {
+  asg_name         = "scheduling"
+  source           = "./ec2_application"
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.public_subnet.public_subnet_id
+  environment = "sa-assignment"
+}
 
 # This module block configures an S3 bucket using a local module located at "./s3_bucket".
 module "s3_bucket" {
@@ -116,25 +116,25 @@ module "s3_lifecycle" {
 # - public_subnet_id: The ID of the public subnet within the VPC.
 # - private_routetable_id: The ID of the route table associated with the private subnet.
 # - public_routetable_id: The ID of the route table associated with the public subnet.
-# module "s3_vpc_endpoint" {
-#   source                = "./s3_bucket/s3_vpc_endpoint"
-#   vpc_id                = module.vpc.vpc_id
-#   private_subnet_id     = module.private_subnet.private_subnet_id
-#   public_subnet_id      = module.public_subnet.public_subnet_id
-#   private_routetable_id = module.internet_gtw.public_route_table_id
-#   public_routetable_id  = module.vpc.default_route_table_id
-#   environment = "sa-assignment"
-# }
+module "s3_vpc_endpoint" {
+  source                = "./s3_bucket/s3_vpc_endpoint"
+  vpc_id                = module.vpc.vpc_id
+  private_subnet_id     = module.private_subnet.private_subnet_id
+  public_subnet_id      = module.public_subnet.public_subnet_id
+  private_routetable_id = module.internet_gtw.public_route_table_id
+  public_routetable_id  = module.vpc.default_route_table_id
+  environment = "sa-assignment"
+}
 
 # This module block configures an RDS instance using the "rds" module.
 # - source: Specifies the path to the RDS module.
 # - vpc_id: Passes the VPC ID from the VPC module.
 # - subnet_id_aza: Passes the ID of the first private subnet from the private_subnet module.
 # - subnet_id_azb: Passes the ID of the second private subnet from the private_subnetb module.
-# module "rds" {
-#   source = "./rds"
-#   vpc_id = module.vpc.vpc_id
-#   subnet_id_aza = module.private_subnet.private_subnet_id
-#   subnet_id_azb = module.private_subnetb.private_subnet_id
-#   environment = "sa-assignment"
-# }
+module "rds" {
+  source = "./rds"
+  vpc_id = module.vpc.vpc_id
+  subnet_id_aza = module.private_subnet.private_subnet_id
+  subnet_id_azb = module.private_subnetb.private_subnet_id
+  environment = "sa-assignment"
+}
