@@ -11,6 +11,11 @@ variable "az_name" {
   description = "The availability zone to place the subnet in"
   type = string
 }
+variable "environment" {
+  description = "Environment tag for this resources"
+  type        = string
+}
+
 
 resource "aws_subnet" "private" {
   vpc_id = var.vpc_id
@@ -18,6 +23,7 @@ resource "aws_subnet" "private" {
   availability_zone = var.az_name
   tags = {
     Name = "private-subnet"
+    Environment = var.environment
   }
 }
 

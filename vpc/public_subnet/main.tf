@@ -19,6 +19,12 @@ variable "az_name" {
   type = string
 }
 
+variable "environment" {
+  description = "Environment tag for this resources"
+  type        = string
+}
+
+
 resource "aws_subnet" "public" {
   vpc_id = var.vpc_id
   cidr_block = var.subnet_cidr
@@ -26,6 +32,7 @@ resource "aws_subnet" "public" {
   availability_zone = var.az_name
   tags = {
     Name = "public-subnet"
+    Environment = var.environment
   }
 }
 

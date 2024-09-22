@@ -13,6 +13,12 @@ variable "subnet_id_azb" {
   type = string
 }
 
+variable "environment" {
+  description = "Environment tag for this resources"
+  type        = string
+}
+
+
 resource "aws_db_subnet_group" "db_subnet" {
   name       = "db_subnet"
 #   subnet_ids = ["${aws_subnet.private-subnet1.id}", "${aws_subnet.private-subnet2.id}"]
@@ -40,10 +46,15 @@ resource "aws_security_group" "rds" {
   }
   tags = {
     Name = "rds-security-group"
+    Environment = var.environment
   }
 }
 
 resource "aws_db_instance" "default" {
+  tags = {
+    Name = "healthcare-rds-mssql"
+    Environment = var.environment
+  }
   db_subnet_group_name = aws_db_subnet_group.db_subnet.name
 
   identifier        = "healthcare-rds-mssql"

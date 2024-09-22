@@ -2,11 +2,17 @@ variable "vpc_id" {
   description = "The VPC ID to attach the Internet Gateway to"
   type        = string
 }
+variable "environment" {
+  description = "Environment tag for this resources"
+  type        = string
+}
+
 
 resource "aws_internet_gateway" "this" {
     vpc_id = var.vpc_id
     tags = {
         Name = "healthcare-internet-gateway"
+        Environment = var.environment
     }
 }
 
@@ -18,6 +24,7 @@ resource "aws_route_table" "public" {
   }
   tags = {
     Name = "public_route_table"
+    Environment = var.environment
   }
 }
 

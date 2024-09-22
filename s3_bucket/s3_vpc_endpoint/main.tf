@@ -34,6 +34,12 @@ variable "private_routetable_id" {
   type        = string
 }
 
+variable "environment" {
+  description = "Environment tag for this resources"
+  type        = string
+}
+
+
 
 resource "aws_vpc_endpoint" "s3" {
   vpc_id       = var.vpc_id
@@ -47,6 +53,7 @@ resource "aws_vpc_endpoint" "s3" {
 
   tags = {
     Name = "s3-vpc-endpoint"
+    Environment = var.environment
   }
 }
 

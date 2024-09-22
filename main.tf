@@ -13,6 +13,7 @@ resource "random_string" "random_id" {
 module "vpc" {
   source   = "./vpc"
   vpc_cidr = "10.0.0.0/16"
+  environment = "sa-assignment"
 }
 
 
@@ -21,6 +22,7 @@ module "vpc" {
 module "internet_gtw" {
   source = "./vpc/internet_gtw"
   vpc_id = module.vpc.vpc_id
+  environment = "sa-assignment"
 }
 
 
@@ -34,6 +36,7 @@ module "public_subnet" {
   subnet_cidr    = "10.0.1.0/24"
   route_table_id = module.internet_gtw.public_route_table_id
   az_name        = "us-east-1a"
+  environment = "sa-assignment"
 }
 
 # Creates a private subnet in the VPC with the specified CIDR block.
@@ -44,11 +47,10 @@ module "private_subnet" {
   vpc_id      = module.vpc.vpc_id
   subnet_cidr = "10.0.2.0/24"
   az_name     = "us-east-1a"
+  environment = "sa-assignment"
 }
 
-# Creates a public subnet in the VPC with the specified CIDR block and associates it with the public route table.
-# The public subnet is created in the us-east-1b availability zone.
-# This public subnet is used for additional resources that need to be publicly accessible.
+
 module "public_subnetb" {
   depends_on     = [module.internet_gtw.public_route_table_id]
   source         = "./vpc/public_subnet"
@@ -56,20 +58,15 @@ module "public_subnetb" {
   subnet_cidr    = "10.0.3.0/24"
   route_table_id = module.internet_gtw.public_route_table_id
   az_name        = "us-east-1b"
+  environment = "sa-assignment"
 }
 
-# This module creates a private subnet in the specified VPC.
-# 
-# Arguments:
-# - source: The path to the module that provisions the private subnet.
-# - vpc_id: The ID of the VPC where the subnet will be created.
-# - subnet_cidr: The CIDR block for the subnet.
-# - az_name: The Availability Zone where the subnet will be created.
 module "private_subnetb" {
   source      = "./vpc/private_subnet"
   vpc_id      = module.vpc.vpc_id
   subnet_cidr = "10.0.4.0/24"
   az_name     = "us-east-1b"
+  environment = "sa-assignment"
 }
 
 # This module configuration sets up an EC2 instance and Auto Scaling Group (ASG) for the billing application.
@@ -81,6 +78,7 @@ module "ec2_billing" {
   source           = "./ec2_application"
   vpc_id           = module.vpc.vpc_id
   public_subnet_id = module.public_subnet.public_subnet_id
+  environment = "sa-assignment"
 }
 
 module "ec2_scheduling" {
@@ -88,12 +86,14 @@ module "ec2_scheduling" {
   source           = "./ec2_application"
   vpc_id           = module.vpc.vpc_id
   public_subnet_id = module.public_subnet.public_subnet_id
+  environment = "sa-assignment"
 }
 
 # This module block configures an S3 bucket using a local module located at "./s3_bucket".
 module "s3_bucket" {
   source      = "./s3_bucket"
   bucket_name = "healthcare-s3-bucket-${random_string.random_id.result}"
+  environment = "sa-assignment"
 }
 
 # This module configures the lifecycle policies for an S3 bucket.
@@ -123,6 +123,7 @@ module "s3_vpc_endpoint" {
   public_subnet_id      = module.public_subnet.public_subnet_id
   private_routetable_id = module.internet_gtw.public_route_table_id
   public_routetable_id  = module.vpc.default_route_table_id
+  environment = "sa-assignment"
 }
 
 # This module block configures an RDS instance using the "rds" module.
@@ -135,4 +136,5 @@ module "rds" {
   vpc_id = module.vpc.vpc_id
   subnet_id_aza = module.private_subnet.private_subnet_id
   subnet_id_azb = module.private_subnetb.private_subnet_id
+  environment = "sa-assignment"
 }

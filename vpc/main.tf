@@ -2,6 +2,11 @@ variable "vpc_cidr" {
   description = "CIDR block for the public subnet"
   type = string
 }
+variable "environment" {
+  description = "Environment tag for this resources"
+  type        = string
+}
+
 
 resource "aws_vpc" "main_vpc" {
   cidr_block = var.vpc_cidr
@@ -10,6 +15,7 @@ resource "aws_vpc" "main_vpc" {
 
   tags = {
     Name = "healthcare-vpc"
+    Environment = var.environment
   }
 }
 

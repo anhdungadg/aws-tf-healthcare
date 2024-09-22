@@ -13,6 +13,12 @@ variable "asg_name" {
   type        = string
 }
 
+variable "environment" {
+  description = "Environment tag for this resources"
+  type        = string
+}
+
+
 resource "aws_launch_template" "ec_webapp" {
   name_prefix = "healthcare-launch-template-"
   image_id = "ami-0ebfd941bbafe70c6"
@@ -41,6 +47,13 @@ resource "aws_autoscaling_group" "web_server_asg" {
     value               = var.asg_name
     propagate_at_launch = true
   }
+  
+  tag {
+    key                 = "Environment"
+    value               = var.environment
+    propagate_at_launch = true
+  }
+
 
   health_check_type         = "EC2"
   health_check_grace_period = 300
