@@ -37,8 +37,10 @@ For MVP purpose: https://calculator.aws/#/estimate?id=927c147271d56f0cad379736da
 ## 3. Live demo
 Check out this repository https://github.com/anhdungadg/aws-tf-healthcare and run
 
+```
 $ terraform init
 $ terraform apply
+```
 
 ## 4. Conclusion
 The "Cloud Migration with Security and Compliance Focus" project will ensure the healthcare provider achieves a secure, compliant cloud environment that adheres to healthcare regulations, provides fast disaster recovery, and supports flexible infrastructure growth for the future.
