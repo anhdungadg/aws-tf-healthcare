@@ -2,6 +2,12 @@ provider "aws" {
   region = "us-east-1"
 }
 
+resource "random_string" "random_id" {
+  length  = 9
+  special = false  # No special characters
+  upper   = false  # No uppercase letters
+}
+
 # Creates a VPC with the specified CIDR block.
 # This VPC is used to host the billing and scheduling application resources.
 module "vpc" {
@@ -27,7 +33,7 @@ module "public_subnet" {
   vpc_id         = module.vpc.vpc_id
   subnet_cidr    = "10.0.1.0/24"
   route_table_id = module.internet_gtw.public_route_table_id
-  az_name = "us-east-1a"
+  az_name        = "us-east-1a"
 }
 
 # Creates a private subnet in the VPC with the specified CIDR block.
@@ -37,7 +43,7 @@ module "private_subnet" {
   source      = "./vpc/private_subnet"
   vpc_id      = module.vpc.vpc_id
   subnet_cidr = "10.0.2.0/24"
-  az_name = "us-east-1a"
+  az_name     = "us-east-1a"
 }
 
 # Creates a public subnet in the VPC with the specified CIDR block and associates it with the public route table.
@@ -49,7 +55,7 @@ module "public_subnetb" {
   vpc_id         = module.vpc.vpc_id
   subnet_cidr    = "10.0.3.0/24"
   route_table_id = module.internet_gtw.public_route_table_id
-  az_name = "us-east-1b"
+  az_name        = "us-east-1b"
 }
 
 # This module creates a private subnet in the specified VPC.
@@ -63,7 +69,7 @@ module "private_subnetb" {
   source      = "./vpc/private_subnet"
   vpc_id      = module.vpc.vpc_id
   subnet_cidr = "10.0.4.0/24"
-  az_name = "us-east-1b"
+  az_name     = "us-east-1b"
 }
 
 # This module configuration sets up an EC2 instance and Auto Scaling Group (ASG) for the billing application.
@@ -84,22 +90,10 @@ module "ec2_scheduling" {
   public_subnet_id = module.public_subnet.public_subnet_id
 }
 
-# This module block configures an RDS instance using the "rds" module.
-# - source: Specifies the path to the RDS module.
-# - vpc_id: Passes the VPC ID from the VPC module.
-# - subnet_id_aza: Passes the ID of the first private subnet from the private_subnet module.
-# - subnet_id_azb: Passes the ID of the second private subnet from the private_subnetb module.
-module "rds" {
-  source = "./rds"
-  vpc_id = module.vpc.vpc_id
-  subnet_id_aza = module.private_subnet.private_subnet_id
-  subnet_id_azb = module.private_subnetb.private_subnet_id
-}
-
 # This module block configures an S3 bucket using a local module located at "./s3_bucket".
 module "s3_bucket" {
   source      = "./s3_bucket"
-  bucket_name = "healthcare-s3-bucket"
+  bucket_name = "healthcare-s3-bucket-${random_string.random_id.result}"
 }
 
 # This module configures the lifecycle policies for an S3 bucket.
@@ -108,9 +102,9 @@ module "s3_bucket" {
 # - source: The path to the module that sets up the S3 lifecycle policies.
 # - bucket_name: The name of the S3 bucket to which the lifecycle policies will be applied.
 module "s3_lifecycle" {
-    depends_on = [ module.s3_bucket ]
-  source = "./s3_bucket/s3_lifecycle"
-  bucket_name = "healthcare-s3-bucket"
+  depends_on  = [module.s3_bucket]
+  source      = "./s3_bucket/s3_lifecycle"
+  bucket_name = module.s3_bucket.bucket_name
 }
 
 # This module configures an S3 VPC endpoint within the specified VPC.
@@ -123,10 +117,22 @@ module "s3_lifecycle" {
 # - private_routetable_id: The ID of the route table associated with the private subnet.
 # - public_routetable_id: The ID of the route table associated with the public subnet.
 module "s3_vpc_endpoint" {
-  source             = "./s3_bucket/s3_vpc_endpoint"
-  vpc_id             = module.vpc.vpc_id
-  private_subnet_id = module.private_subnet.private_subnet_id
-  public_subnet_id = module.public_subnet.public_subnet_id
+  source                = "./s3_bucket/s3_vpc_endpoint"
+  vpc_id                = module.vpc.vpc_id
+  private_subnet_id     = module.private_subnet.private_subnet_id
+  public_subnet_id      = module.public_subnet.public_subnet_id
   private_routetable_id = module.internet_gtw.public_route_table_id
-  public_routetable_id = module.vpc.default_route_table_id
+  public_routetable_id  = module.vpc.default_route_table_id
+}
+
+# This module block configures an RDS instance using the "rds" module.
+# - source: Specifies the path to the RDS module.
+# - vpc_id: Passes the VPC ID from the VPC module.
+# - subnet_id_aza: Passes the ID of the first private subnet from the private_subnet module.
+# - subnet_id_azb: Passes the ID of the second private subnet from the private_subnetb module.
+module "rds" {
+  source = "./rds"
+  vpc_id = module.vpc.vpc_id
+  subnet_id_aza = module.private_subnet.private_subnet_id
+  subnet_id_azb = module.private_subnetb.private_subnet_id
 }
