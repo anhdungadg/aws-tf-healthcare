@@ -8,3 +8,4 @@ A healthcare provider is planning to migrate their on-premises infrastructure to
 ### 1.2. High Level Architect
 This architecture provides the healthcare provider with a secure, scalable, and compliant cloud environment for hosting their critical applications and sensitive medical data.
 
+![High Level Architect](ckvn-healthcare.png)
