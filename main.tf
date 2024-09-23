@@ -2,6 +2,9 @@ provider "aws" {
   region = "us-east-1"
 }
 
+# This resource is used to generate a unique ID for the S3 bucket.
+# The generated string will contain only lowercase letters and digits,
+# as special characters and uppercase letters are disabled.
 resource "random_string" "random_id" {
   length  = 9
   special = false  # No special characters
@@ -73,25 +76,26 @@ module "private_subnetb" {
 # - asg_name: Specifies the name of the Auto Scaling Group.
 # - vpc_id: References the VPC ID from the VPC module.
 # - public_subnet_id: References the public subnet ID from the public subnet module.
-module "ec2_billing" {
-  asg_name         = "billing"
-  source           = "./ec2_application"
-  vpc_id           = module.vpc.vpc_id
-  public_subnet_id = module.public_subnet.public_subnet_id
-  environment = "sa-assignment"
-}
+# module "ec2_billing" {
+#   asg_name         = "billing"
+#   source           = "./ec2_application"
+#   vpc_id           = module.vpc.vpc_id
+#   public_subnet_id = module.public_subnet.public_subnet_id
+#   environment = "sa-assignment"
+# }
 
-module "ec2_scheduling" {
-  asg_name         = "scheduling"
-  source           = "./ec2_application"
-  vpc_id           = module.vpc.vpc_id
-  public_subnet_id = module.public_subnet.public_subnet_id
-  environment = "sa-assignment"
-}
+# module "ec2_scheduling" {
+#   asg_name         = "scheduling"
+#   source           = "./ec2_application"
+#   vpc_id           = module.vpc.vpc_id
+#   public_subnet_id = module.public_subnet.public_subnet_id
+#   environment = "sa-assignment"
+# }
 
 # This module block configures an S3 bucket using a local module located at "./s3_bucket".
 module "s3_bucket" {
   source      = "./s3_bucket"
+  vpc_id = module.vpc.vpc_id
   bucket_name = "healthcare-s3-bucket-${random_string.random_id.result}"
   environment = "sa-assignment"
 }
@@ -131,10 +135,10 @@ module "s3_vpc_endpoint" {
 # - vpc_id: Passes the VPC ID from the VPC module.
 # - subnet_id_aza: Passes the ID of the first private subnet from the private_subnet module.
 # - subnet_id_azb: Passes the ID of the second private subnet from the private_subnetb module.
-module "rds" {
-  source = "./rds"
-  vpc_id = module.vpc.vpc_id
-  subnet_id_aza = module.private_subnet.private_subnet_id
-  subnet_id_azb = module.private_subnetb.private_subnet_id
-  environment = "sa-assignment"
-}
+# module "rds" {
+#   source = "./rds"
+#   vpc_id = module.vpc.vpc_id
+#   subnet_id_aza = module.private_subnet.private_subnet_id
+#   subnet_id_azb = module.private_subnetb.private_subnet_id
+#   environment = "sa-assignment"
+# }

@@ -42,5 +42,8 @@ $ terraform init
 $ terraform apply
 ```
 
+_In best scenario: Creation complete after 15m3s._
+
+
 ## 4. Conclusion
 The "Cloud Migration with Security and Compliance Focus" project will ensure the healthcare provider achieves a secure, compliant cloud environment that adheres to healthcare regulations, provides fast disaster recovery, and supports flexible infrastructure growth for the future.
