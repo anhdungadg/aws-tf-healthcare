@@ -97,6 +97,7 @@ module "s3_bucket" {
   source      = "./s3_bucket"
   vpc_id = module.vpc.vpc_id
   bucket_name = "healthcare-s3-bucket-${random_string.random_id.result}"
+  s3_policy_notprincipal = "arn:aws:iam::xxx:user/yyy-user"
   environment = "sa-assignment"
 }
 

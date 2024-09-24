@@ -5,7 +5,9 @@ variable "bucket_name" {
 variable "vpc_id" {
   type = string
 }
-
+variable "s3_policy_notprincipal" {
+  type = string
+}
 variable "environment" {
   description = "Environment tag for this resources"
   type        = string
@@ -69,7 +71,7 @@ resource "aws_s3_bucket_policy" "this" {
         Effect    = "Deny",
         # Principal = "*",
         NotPrincipal = {
-          AWS = "arn:aws:iam::xx:user/your-user"
+          AWS = var.s3_policy_notprincipal
         },
         Action    = "s3:*",
         Resource = [
