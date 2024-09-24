@@ -75,7 +75,7 @@ resource "aws_s3_bucket_policy" "this" {
         ],
         Condition = {
           StringNotEquals = {
-            "aws:SourceVpce" = var.vpc_id
+            "aws:SourceVpc" = var.vpc_id
           }
         }
       }

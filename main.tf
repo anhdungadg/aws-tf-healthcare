@@ -76,13 +76,13 @@ module "private_subnetb" {
 # - asg_name: Specifies the name of the Auto Scaling Group.
 # - vpc_id: References the VPC ID from the VPC module.
 # - public_subnet_id: References the public subnet ID from the public subnet module.
-# module "ec2_billing" {
-#   asg_name         = "billing"
-#   source           = "./ec2_application"
-#   vpc_id           = module.vpc.vpc_id
-#   public_subnet_id = module.public_subnet.public_subnet_id
-#   environment = "sa-assignment"
-# }
+module "ec2_billing" {
+  asg_name         = "billing"
+  source           = "./ec2_application"
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.public_subnet.public_subnet_id
+  environment = "sa-assignment"
+}
 
 # module "ec2_scheduling" {
 #   asg_name         = "scheduling"
