@@ -84,13 +84,13 @@ module "ec2_billing" {
   environment = "sa-assignment"
 }
 
-# module "ec2_scheduling" {
-#   asg_name         = "scheduling"
-#   source           = "./ec2_application"
-#   vpc_id           = module.vpc.vpc_id
-#   public_subnet_id = module.public_subnet.public_subnet_id
-#   environment = "sa-assignment"
-# }
+module "ec2_scheduling" {
+  asg_name         = "scheduling"
+  source           = "./ec2_application"
+  vpc_id           = module.vpc.vpc_id
+  public_subnet_id = module.public_subnet.public_subnet_id
+  environment = "sa-assignment"
+}
 
 # This module block configures an S3 bucket using a local module located at "./s3_bucket".
 module "s3_bucket" {
@@ -135,10 +135,10 @@ module "s3_vpc_endpoint" {
 # - vpc_id: Passes the VPC ID from the VPC module.
 # - subnet_id_aza: Passes the ID of the first private subnet from the private_subnet module.
 # - subnet_id_azb: Passes the ID of the second private subnet from the private_subnetb module.
-# module "rds" {
-#   source = "./rds"
-#   vpc_id = module.vpc.vpc_id
-#   subnet_id_aza = module.private_subnet.private_subnet_id
-#   subnet_id_azb = module.private_subnetb.private_subnet_id
-#   environment = "sa-assignment"
-# }
+module "rds" {
+  source = "./rds"
+  vpc_id = module.vpc.vpc_id
+  subnet_id_aza = module.private_subnet.private_subnet_id
+  subnet_id_azb = module.private_subnetb.private_subnet_id
+  environment = "sa-assignment"
+}
