@@ -35,12 +35,15 @@ For MVP purpose: https://calculator.aws/#/estimate?id=927c147271d56f0cad379736da
 
 
 ## 3. Live demo
-Check out this repository https://github.com/anhdungadg/aws-tf-healthcare and run
+Check out this repository https://github.com/anhdungadg/aws-tf-healthcare and run.
 
 ```
 $ terraform init
+$ terraform plan
 $ terraform apply
 ```
+
+* Remember: Update `s3_policy_notprincipal` for your IAM user value.
 
 _In best scenario: Creation complete after 15m3s._
 
